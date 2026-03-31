@@ -1,0 +1,71 @@
+# Python キャッシュ
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ビルド・配布物
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 設定ファイル
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook / 分析
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+lightning_logs/
+
+# IDE
+.vscode/
+.idea/
+
+# データ・モデル・出力（.gitkeep だけ追跡）
+data/*
+!data/.gitkeep
+!data/README.md
+
+models/*
+!models/.gitkeep
+!models/README.md
+
+outputs/*
+!outputs/.gitkeep
+!outputs/README.md
+
+notebooks/*
+!notebooks/.gitkeep
+!notebooks/README.md
+
+scripts/*
+!scripts/.gitkeep
+!scripts/README.md
+
+tests/*
+!tests/.gitkeep
+!tests/README.md
+
+configs/*
+!configs/.gitkeep
+
+docs/*
+!docs/.gitkeep
