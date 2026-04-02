@@ -64,8 +64,5 @@ tests/*
 !tests/.gitkeep
 !tests/README.md
 
-configs/*
-!configs/.gitkeep
-
 docs/*
 !docs/.gitkeep
