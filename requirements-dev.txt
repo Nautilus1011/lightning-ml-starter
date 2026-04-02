@@ -8,6 +8,7 @@ ipython
 ipykernel
 notebook
 ipywidgets
+wandb
 
 # Deep Learning (PyTorch with CUDA 12.1)
 --extra-index-url https://download.pytorch.org/whl/cu121
@@ -25,3 +26,12 @@ pre-commit
 pytest
 pyyaml
 tox
+
+# Configuration & Metrics
+hydra-core
+hydra-colorlog
+omegaconf
+torchmetrics
+
+# PyTorch Lightning (umbrella package that provides `import lightning`)
+lightning
