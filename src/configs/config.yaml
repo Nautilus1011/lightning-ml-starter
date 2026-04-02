@@ -1,0 +1,46 @@
+# @package _global_
+
+# --- Hydra 出力先の設定 ---
+# Hydra 自身のログ (.hydra/ や train.log) をここにまとめる
+# 実行ディレクトリ /app からの相対パスなので、常に /app/outputs/hydra/ に入る
+hydra:
+  run:
+    dir: outputs/hydra/${now:%Y-%m-%d}/${now:%H-%M-%S}
+
+# --- Logger (WandB) ---
+logger:
+  project_name: "voc-object-detection"
+  experiment_name: "fasterrcnn_mobilenet_v3_320"  # ResNet50 → MobileNetV3 に変更
+
+# --- DataModule ---
+data:
+  data_dir: "./data"
+  batch_size: 8      # MobileNetV3 は軽量なので RTX 3060 なら 8 でも快適
+  num_workers: 4
+
+# --- Model (LightningModule) ---
+model:
+  num_classes: 21   # VOCは20クラス + 背景1クラス
+  lr: 0.005         # 学習率 (Sweep対象)
+  momentum: 0.9
+  weight_decay: 0.0005
+
+# --- Trainer (Lightning Trainer) ---
+trainer:
+  max_epochs: 10
+  accelerator: "auto"
+  devices: "auto"
+  precision: "16-mixed"  # RTX 3060 の Tensor Core を活用して高速化・省メモリ
+  log_every_n_steps: 10
+
+# --- Callbacks ---
+callbacks:
+  early_stopping:
+    monitor: "val_loss"
+    patience: 3
+    mode: "min"
+  model_checkpoint:
+    monitor: "val_loss"
+    save_top_k: 1
+    mode: "min"
+    filename: "best-checkpoint"
