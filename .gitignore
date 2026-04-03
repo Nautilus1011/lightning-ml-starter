@@ -52,10 +52,6 @@ outputs/*
 !outputs/.gitkeep
 !outputs/README.md
 
-notebooks/*
-!notebooks/.gitkeep
-!notebooks/README.md
-
 scripts/*
 !scripts/.gitkeep
 !scripts/README.md
