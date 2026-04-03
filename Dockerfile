@@ -23,6 +23,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     wget \
     vim \
     sudo \
+    openssh-client \
     libgl1-mesa-glx \
     libglib2.0-0 \
     build-essential \
