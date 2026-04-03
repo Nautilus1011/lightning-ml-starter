@@ -1,26 +1,27 @@
 """
 inference.py — 学習済みモデルを使った物体検出推論スクリプト。
 
+実行ごとに outputs/runs/YYYY-MM-DD/HH-MM-SS/ が自動生成されます。
+そのディレクトリの中に結果画像と wandb ログがまとまります。
+
 使い方:
   # 単一画像
   cd /app
-  PYTHONPATH=src python src/inference.py \
-    --checkpoint outputs/checkpoints/best-checkpoint.ckpt \
+  PYTHONPATH=src python src/inference.py \\
+    --checkpoint outputs/train/YYYY-MM-DD/HH-MM-SS/checkpoints/best-checkpoint.ckpt \\
     --image data/VOCdevkit/VOC2012/JPEGImages/2007_000032.jpg
 
   # ディレクトリ内の全画像を一括処理
-  PYTHONPATH=src python src/inference.py \
-    --checkpoint outputs/checkpoints/best-checkpoint.ckpt \
-    --image_dir data/VOCdevkit/VOC2012/JPEGImages \
+  PYTHONPATH=src python src/inference.py \\
+    --checkpoint outputs/train/YYYY-MM-DD/HH-MM-SS/checkpoints/best-checkpoint.ckpt \\
+    --image_dir data/VOCdevkit/VOC2012/JPEGImages \\
     --num_images 20
-
-結果画像は outputs/inference/ に保存されます。
-wandb には学習 run とは別に job_type="inference" の run として記録されます。
 """
 
 import os
 import glob
 import argparse
+from datetime import datetime
 from pathlib import Path
 
 import torch
@@ -137,6 +138,9 @@ def run_inference_on_image(model, img_path: str, device, score_thresh: float, ou
 
 
 def main():
+    _now = datetime.now()
+    default_output_dir = f"outputs/runs/{_now.strftime('%Y-%m-%d/%H-%M-%S')}"
+
     parser = argparse.ArgumentParser(description="VOC 物体検出 推論スクリプト")
     parser.add_argument("--checkpoint", type=str, required=True,
                         help="学習済みチェックポイントのパス (.ckpt)")
@@ -148,15 +152,17 @@ def main():
                         help="--image_dir 指定時に処理する画像数 (default: 20)")
     parser.add_argument("--score_thresh", type=float, default=0.5,
                         help="表示する予測のスコア閾値 (default: 0.5)")
-    parser.add_argument("--output_dir", type=str, default="outputs/inference",
-                        help="結果画像の保存先 (default: outputs/inference)")
+    parser.add_argument("--output_dir", type=str, default=default_output_dir,
+                        help=f"結果の保存先 (default: {default_output_dir})")
     parser.add_argument("--wandb_project", type=str, default="voc-object-detection",
                         help="wandb プロジェクト名")
     args = parser.parse_args()
 
     # 出力ディレクトリの作成
+    # outputs/runs/YYYY-MM-DD/HH-MM-SS/ に結果画像と wandb ログがまとまる
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    print(f"出力ディレクトリ: {output_dir.resolve()}")
 
     # デバイスの設定
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -179,11 +185,12 @@ def main():
     # ─── wandb の推論専用 run を開始 ───────────────────────────────
     # job_type="inference" を設定することで、学習 run (job_type="train") と
     # ダッシュボード上でフィルタリングして分けて見ることができる。
+    # dir=str(output_dir) でこの実行のディレクトリ内に wandb/ を作成
     run = wandb.init(
         project=args.wandb_project,
         job_type="inference",          # ← 学習 run との識別キー
         name=f"inference_{Path(args.checkpoint).stem}",
-        dir="outputs",                 # wandb ローカルログを outputs/wandb/ に保存
+        dir=str(output_dir),
         config={
             "checkpoint": args.checkpoint,
             "score_thresh": args.score_thresh,

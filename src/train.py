@@ -1,8 +1,10 @@
 import hydra
 from omegaconf import DictConfig, OmegaConf
+from pathlib import Path
 import lightning as L
 from lightning.pytorch.loggers import WandbLogger
 from lightning.pytorch.callbacks import ModelCheckpoint, EarlyStopping, LearningRateMonitor
+from hydra.core.hydra_config import HydraConfig
 
 # パッケージ化されているため、絶対パスでインポート可能です
 from detection_toolkit.datamodules.voc_datamodule import VOCDataModule
@@ -15,11 +17,13 @@ def train(cfg: DictConfig):
     """
     print(OmegaConf.to_yaml(cfg))
 
+    run_dir = Path(HydraConfig.get().runtime.output_dir)
+
     # WandB ロガー
     wandb_logger = WandbLogger(
         project=cfg.logger.project_name,
         name=cfg.logger.experiment_name,
-        save_dir="outputs/"
+        save_dir=str(run_dir),
     )
 
     # DataModule
@@ -39,7 +43,7 @@ def train(cfg: DictConfig):
 
     # Callbacks
     checkpoint_callback = ModelCheckpoint(
-        dirpath="outputs/checkpoints",
+        dirpath=str(run_dir / "checkpoints"),
         monitor=cfg.callbacks.model_checkpoint.monitor,
         mode=cfg.callbacks.model_checkpoint.mode,
         save_top_k=cfg.callbacks.model_checkpoint.save_top_k,
