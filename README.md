@@ -150,8 +150,15 @@ WANDB_MODE=offline PYTHONPATH=src python src/train.py
 
 ### 学習済みモデルの保存先
 
+学習を実行するたびにタイムスタンプ付きのディレクトリが自動生成されます。
+
 ```
-outputs/checkpoints/best-checkpoint.ckpt   ← val_loss が最良のエポックが自動保存される
+outputs/train/YYYY-MM-DD/HH-MM-SS/
+├── .hydra/                        ← Hydra の設定スナップショット
+├── checkpoints/
+│   └── best-checkpoint.ckpt      ← val_loss が最良のエポックが自動保存される
+├── train.log
+└── wandb/                         ← wandb ローカルキャッシュ
 ```
 
 `config.yaml` の `callbacks.model_checkpoint.filename` でファイル名を変更できます。
@@ -173,14 +180,14 @@ outputs/checkpoints/best-checkpoint.ckpt   ← val_loss が最良のエポック
 ## Step 4 — 推論の実行
 
 学習が完了したら、保存された `.ckpt` ファイルを使って任意の画像に対して推論できます。
-推論結果（バウンディングボックス付き画像）は `outputs/inference/` に保存され、wandb にも記録されます。
+推論結果（バウンディングボックス付き画像）は `outputs/runs/YYYY-MM-DD/HH-MM-SS/` に保存され、wandb にも記録されます。
 
 ### 単一画像の推論
 
 ```bash
 cd /app
 PYTHONPATH=src python src/inference.py \
-  --checkpoint outputs/checkpoints/best-checkpoint.ckpt \
+  --checkpoint outputs/train/YYYY-MM-DD/HH-MM-SS/checkpoints/best-checkpoint.ckpt \
   --image data/VOCdevkit/VOC2012/JPEGImages/2007_000032.jpg
 ```
 
@@ -189,7 +196,7 @@ PYTHONPATH=src python src/inference.py \
 ```bash
 cd /app
 PYTHONPATH=src python src/inference.py \
-  --checkpoint outputs/checkpoints/best-checkpoint.ckpt \
+  --checkpoint outputs/train/YYYY-MM-DD/HH-MM-SS/checkpoints/best-checkpoint.ckpt \
   --image_dir data/VOCdevkit/VOC2012/JPEGImages \
   --num_images 20
 ```
@@ -203,7 +210,15 @@ PYTHONPATH=src python src/inference.py \
 | `--image_dir` | — | 画像ディレクトリのパス（`--image` と排他） |
 | `--num_images` | `20` | `--image_dir` 指定時に処理する枚数 |
 | `--score_thresh` | `0.5` | 表示するバウンディングボックスのスコア閾値 |
-| `--output_dir` | `outputs/inference` | 結果画像の保存先 |
+| `--output_dir` | `outputs/runs/YYYY-MM-DD/HH-MM-SS` | 結果画像の保存先（自動生成） |
+
+### 推論の出力ディレクトリ構造
+
+```
+outputs/runs/YYYY-MM-DD/HH-MM-SS/
+├── 2007_000032_pred.jpg    ← バウンディングボックス付き画像
+└── wandb/                  ← wandb ローカルキャッシュ
+```
 
 ### 自分で学習したモデルを指定する
 
@@ -212,7 +227,7 @@ PYTHONPATH=src python src/inference.py \
 ```bash
 # 例: 別のチェックポイントを使いたい場合
 PYTHONPATH=src python src/inference.py \
-  --checkpoint outputs/checkpoints/best-checkpoint.ckpt \
+  --checkpoint outputs/train/YYYY-MM-DD/HH-MM-SS/checkpoints/best-checkpoint.ckpt \
   --image_dir data/VOCdevkit/VOC2012/JPEGImages \
   --num_images 50 \
   --score_thresh 0.6
@@ -319,7 +334,7 @@ callbacks:
     monitor: "val_loss"
     save_top_k: 1
     mode: "min"
-    filename: "best-checkpoint"   # → outputs/checkpoints/best-checkpoint.ckpt に保存
+    filename: "best-checkpoint"   # → outputs/train/YYYY-MM-DD/HH-MM-SS/checkpoints/best-checkpoint.ckpt に保存
 ```
 
 ---
