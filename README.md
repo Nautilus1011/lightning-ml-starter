@@ -296,7 +296,7 @@ PYTHONPATH=src python scripts/smoke_test.py
 
 ---
 
-## 設定ファイル詳細 (`src/configs/config.yaml`)
+## 設定ファイル詳細 (`configs/train.yaml`)
 
 ```yaml
 hydra:
