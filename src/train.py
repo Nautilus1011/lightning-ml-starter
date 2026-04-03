@@ -10,7 +10,7 @@ from hydra.core.hydra_config import HydraConfig
 from detection_toolkit.datamodules.voc_datamodule import VOCDataModule
 from detection_toolkit.models.detector import VOCDetector
 
-@hydra.main(version_base=None, config_path="configs", config_name="config")
+@hydra.main(version_base=None, config_path="../configs", config_name="train")
 def train(cfg: DictConfig):
     """
     学習の実行メイン関数。
