@@ -21,13 +21,14 @@ PyTorch Lightning + Weights & Biases (wandb) を使った Faster R-CNN 物体検
 ```text
 .
 ├── configs/
-│   └── train.yaml               # 学習の全パラメータをここで一元管理（Hydra）
+│   ├── train.yaml               # 学習の全パラメータをここで一元管理（Hydra）
+│   └── sweep.yaml               # WandB Sweep によるハイパーパラメータ自動探索の設定
 ├── docs/
 │   ├── docker.md                # Docker・docker-compose の設定解説
 │   ├── hydra.md                 # Hydra による設定管理・train.yaml 解説
 │   ├── parser.md                # argparse による引数管理（inference.py 解説）
 │   ├── pytorch_lightning.md     # LightningModule / DataModule / Trainer 解説
-│   └── wandb.md                 # wandb セットアップ・ログ・推論時の記録
+│   └── wandb.md                 # wandb セットアップ・ログ・mAP・Sweep の解説
 ├── notebooks/
 │   └── training_and_inference.ipynb  # 学習・推論の実行手順と証跡
 ├── src/
@@ -159,6 +160,29 @@ PYTHONPATH=src python src/inference.py \
 
 ---
 
+---
+
+## Step 5 — WandB Sweep でハイパーパラメータを探索する
+
+Sweep はハイパーパラメータの探索を自動化する機能です。`lr`, `weight_decay`, `batch_size` などの
+範囲を指定すると、複数の Run を自動実行して最も良い組み合わせを見つけてくれます。
+
+```bash
+# 1. スイープを登録（wandb プロジェクトに Sweep が作成される）
+wandb sweep configs/sweep.yaml
+# → "Created sweep with ID: <sweep-id>" が表示される
+
+# 2. エージェントを起動（自動で学習を繰り返す）
+wandb agent <entity>/<project>/<sweep-id>
+```
+
+`wandb agent` を複数ターミナルや複数マシンで同時に起動すると並列探索になります。  
+探索対象のパラメータや探索範囲は `configs/sweep.yaml` で自由に変更できます。
+
+> Sweep の詳細な設定・実行方法・ダッシュボードの見方は [docs/wandb.md](docs/wandb.md) を参照してください。
+
+---
+
 ## Notebook で手順を確認する
 
 [notebooks/training_and_inference.ipynb](notebooks/training_and_inference.ipynb) に、上記の Step 1〜4 を Notebook 形式でまとめてあります。実行済みの出力（学習ログ・推論結果画像）が残っているため、手元で動かす前に全体の流れと結果を確認できます。
@@ -173,7 +197,7 @@ PYTHONPATH=src python src/inference.py \
 | [docs/hydra.md](docs/hydra.md) | `train.yaml` の各セクション解説、`@hydra.main`・`DictConfig`・`HydraConfig` の使い方、出力ディレクトリの仕組み |
 | [docs/parser.md](docs/parser.md) | `argparse` の基本から `add_mutually_exclusive_group` まで `inference.py` の引数定義を詳解。Hydra との使い分けも説明 |
 | [docs/pytorch_lightning.md](docs/pytorch_lightning.md) | `LightningModule`・`LightningDataModule`・`Trainer`・コールバックを実コードと照らして解説 |
-| [docs/wandb.md](docs/wandb.md) | 基本概念の定義、セットアップ、学習・推論それぞれのロギング方法、オフラインモード |
+| [docs/wandb.md](docs/wandb.md) | 基本概念の定義、セットアップ、学習・推論それぞれのロギング方法、mAP 評価指標、WandB Sweep、オフラインモード |
 
 ---
 
