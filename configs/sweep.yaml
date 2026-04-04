@@ -1,0 +1,46 @@
+# WandB Sweep 設定 — ベイズ最適化によるハイパーパラメータ探索
+#
+# 実行手順（コンテナ内 /app で実行）:
+#   1. スイープを登録: wandb sweep configs/sweep.yaml
+#      → "Created sweep with ID: <sweep-id>" が表示される
+#   2. エージェントを起動: wandb agent <entity>/<project>/<sweep-id>
+#      （複数 GPU や複数マシンで同じコマンドを実行すると並列探索になる）
+
+program: src/train.py
+
+# ベイズ最適化: 過去の試行結果をもとに次に試す値を決定する
+# random（完全ランダム）/ grid（全組み合わせ）より少ない試行で良い設定を見つけやすい
+method: bayes
+
+metric:
+  name: val_mAP   # 最大化したい指標（val_mAP_50 や val_loss への変更も可）
+  goal: maximize
+
+# wandb sweep agent が Hydra の CLI 引数形式（key=value）でパラメータを渡す設定
+# ${args_no_hyphens} により "--lr=0.01" ではなく "model.lr=0.01" として渡される
+command:
+  - ${env}
+  - python
+  - ${program}
+  - ${args_no_hyphens}
+
+parameters:
+  # 学習率: 対数スケールで広い範囲を探索
+  model.lr:
+    distribution: log_uniform_values
+    min: 0.0001
+    max: 0.05
+
+  # 重み減衰: 正則化の強さ
+  model.weight_decay:
+    distribution: log_uniform_values
+    min: 0.00001
+    max: 0.001
+
+  # バッチサイズ: 候補値から選択
+  data.batch_size:
+    values: [4, 8]
+
+  # 早期終了の猶予エポック数
+  callbacks.early_stopping.patience:
+    values: [3, 5]
