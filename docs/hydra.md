@@ -287,5 +287,4 @@ outputs/train/
 
 ## WandB Sweep との組み合わせ
 
-Hydra のコマンドライン上書きは WandB Sweep と相性が良く、  
-ハイパーパラメータ探索を自動化できます。詳細は [wandb_sweep.md](wandb_sweep.md) を参照してください。
+Hydra のコマンドライン上書きは WandB Sweep と相性が良く、ハイパーパラメータ探索を自動化できます。
