@@ -38,11 +38,11 @@ trainer:
 # --- Callbacks ---
 callbacks:
   early_stopping:
-    monitor: "val_loss"
+    monitor: "val_mAP"
     patience: 3
-    mode: "min"
+    mode: "max"
   model_checkpoint:
-    monitor: "val_loss"
+    monitor: "val_mAP"
     save_top_k: 1
-    mode: "min"
+    mode: "max"
     filename: "best-checkpoint"
