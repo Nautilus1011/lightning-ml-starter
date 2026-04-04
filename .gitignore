@@ -59,6 +59,3 @@ scripts/*
 tests/*
 !tests/.gitkeep
 !tests/README.md
-
-docs/*
-!docs/.gitkeep

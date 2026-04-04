@@ -158,8 +158,6 @@ def main():
                         help="wandb プロジェクト名")
     args = parser.parse_args()
 
-    # 出力ディレクトリの作成
-    # outputs/runs/YYYY-MM-DD/HH-MM-SS/ に結果画像と wandb ログがまとまる
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     print(f"出力ディレクトリ: {output_dir.resolve()}")
@@ -182,13 +180,9 @@ def main():
         image_paths = all_images[: args.num_images]
         print(f"{len(all_images)} 枚中 {len(image_paths)} 枚を処理します")
 
-    # ─── wandb の推論専用 run を開始 ───────────────────────────────
-    # job_type="inference" を設定することで、学習 run (job_type="train") と
-    # ダッシュボード上でフィルタリングして分けて見ることができる。
-    # dir=str(output_dir) でこの実行のディレクトリ内に wandb/ を作成
     run = wandb.init(
         project=args.wandb_project,
-        job_type="inference",          # ← 学習 run との識別キー
+        job_type="inference",
         name=f"inference_{Path(args.checkpoint).stem}",
         dir=str(output_dir),
         config={
