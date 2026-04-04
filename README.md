@@ -23,11 +23,11 @@ PyTorch Lightning + Weights & Biases (wandb) を使った Faster R-CNN 物体検
 ├── configs/
 │   └── train.yaml               # 学習の全パラメータをここで一元管理（Hydra）
 ├── docs/
-│   ├── docker.md                # Docker 環境の詳細ガイド
-│   ├── hydra.md                 # Hydra による設定管理ガイド
-│   ├── pytorch_lightning.md     # PyTorch Lightning コード解説
-│   ├── wandb.md                 # wandb セットアップ・ログ確認
-│   └── wandb_sweep.md           # WandB Sweep ハイパーパラメータ探索
+│   ├── docker.md                # Docker・docker-compose の設定解説
+│   ├── hydra.md                 # Hydra による設定管理・train.yaml 解説
+│   ├── parser.md                # argparse による引数管理（inference.py 解説）
+│   ├── pytorch_lightning.md     # LightningModule / DataModule / Trainer 解説
+│   └── wandb.md                 # wandb セットアップ・ログ・推論時の記録
 ├── notebooks/
 │   └── training_and_inference.ipynb  # 学習・推論の実行手順と証跡
 ├── src/
@@ -169,11 +169,11 @@ PYTHONPATH=src python src/inference.py \
 
 | ドキュメント | 内容 |
 |---|---|
-| [docs/docker.md](docs/docker.md) | Dockerfile・compose の設定解説、よくあるトラブル対処 |
-| [docs/hydra.md](docs/hydra.md) | 設定ファイルの構造、コマンドラインオーバーライド、出力ディレクトリの仕組み |
-| [docs/pytorch_lightning.md](docs/pytorch_lightning.md) | LightningModule / DataModule / Callback のコード解説 |
-| [docs/wandb.md](docs/wandb.md) | セットアップ、ログ項目の説明、オフラインモード |
-| [docs/wandb_sweep.md](docs/wandb_sweep.md) | Sweep によるハイパーパラメータ自動探索の手順 |
+| [docs/docker.md](docs/docker.md) | Dockerfile の各命令・docker-compose.yml の各設定を詳解。よくあるトラブル対処も記載 |
+| [docs/hydra.md](docs/hydra.md) | `train.yaml` の各セクション解説、`@hydra.main`・`DictConfig`・`HydraConfig` の使い方、出力ディレクトリの仕組み |
+| [docs/parser.md](docs/parser.md) | `argparse` の基本から `add_mutually_exclusive_group` まで `inference.py` の引数定義を詳解。Hydra との使い分けも説明 |
+| [docs/pytorch_lightning.md](docs/pytorch_lightning.md) | `LightningModule`・`LightningDataModule`・`Trainer`・コールバックを実コードと照らして解説 |
+| [docs/wandb.md](docs/wandb.md) | 基本概念の定義、セットアップ、学習・推論それぞれのロギング方法、オフラインモード |
 
 ---
 
