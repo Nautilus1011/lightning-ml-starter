@@ -39,6 +39,8 @@ WORKDIR /app
 
 USER $USERNAME
 
+ENV PATH="/home/${USERNAME}/.local/bin:${PATH}"
+
 # 依存関係のコピーとインストール
 COPY --chown=$USERNAME:$USER_GID requirements-dev.txt setup.py setup.cfg README.md LICENSE ./
 
