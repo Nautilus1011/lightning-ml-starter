@@ -2,6 +2,8 @@
 
 PyTorch Lightning + Weights & Biases (wandb) を使った Faster R-CNN 物体検出の研究用スターターテンプレートです。
 
+Claude Code などのコーディングエージェントと一緒に開発するための設定（`CLAUDE.md` と `.claude/`）も同梱しています。使い方は [docs/claude_code.md](docs/claude_code.md) を参照してください。
+
 ## 技術スタック
 
 | 項目 | 内容 |
@@ -13,6 +15,7 @@ PyTorch Lightning + Weights & Biases (wandb) を使った Faster R-CNN 物体検
 | データセット | Pascal VOC 2012（初回実行時に自動ダウンロード・約 2 GB） |
 | 実験管理 | Weights & Biases (wandb) |
 | 設定管理 | Hydra |
+| コーディングエージェント | Claude Code |
 
 ---
 
@@ -20,9 +23,15 @@ PyTorch Lightning + Weights & Biases (wandb) を使った Faster R-CNN 物体検
 
 ```text
 .
+├── .claude/
+│   ├── rules/                   # エージェントが常に守るルール
+│   ├── skills/                  # /pr・/dev-check・/train-loop などの作業手順
+│   └── settings.json            # コマンドの実行権限
+├── CLAUDE.md                    # エージェント向けのリポジトリ取扱説明書
 ├── configs/
 │   └── train.yaml               # 学習の全パラメータをここで一元管理（Hydra）
 ├── docs/
+│   ├── claude_code.md           # Claude Code と進める開発の解説
 │   ├── docker.md                # Docker・docker-compose の設定解説
 │   ├── hydra.md                 # Hydra による設定管理・train.yaml 解説
 │   ├── parser.md                # argparse による引数管理（inference.py 解説）
@@ -165,10 +174,26 @@ PYTHONPATH=src python src/inference.py \
 
 ---
 
+## Claude Code と一緒に開発する
+
+このリポジトリには、Claude Code がリポジトリの流儀に沿って作業するための設定が入っています。
+
+```text
+> /issue 推論結果を CSV でも保存したい   # Issue をテンプレートどおりに作成
+> /dev-check                              # 変更内容に応じた動作確認
+> /pr                                     # PR テンプレートに沿って PR を作成
+> /train-loop --loops 5                   # 学習→振り返りのループを最大 5 回
+```
+
+ルールとスキルの考え方、自分のリポジトリへの取り入れ方は [docs/claude_code.md](docs/claude_code.md) にまとめています。
+
+---
+
 ## 各ツールの詳細ドキュメント
 
 | ドキュメント | 内容 |
 |---|---|
+| [docs/claude_code.md](docs/claude_code.md) | `CLAUDE.md`・rules・skills・settings の役割分担、`/train-loop` の仕組み、エージェントと開発するときの心がけ |
 | [docs/docker.md](docs/docker.md) | Dockerfile の各命令・docker-compose.yml の各設定を詳解。よくあるトラブル対処も記載 |
 | [docs/hydra.md](docs/hydra.md) | `train.yaml` の各セクション解説、`@hydra.main`・`DictConfig`・`HydraConfig` の使い方、出力ディレクトリの仕組み |
 | [docs/parser.md](docs/parser.md) | `argparse` の基本から `add_mutually_exclusive_group` まで `inference.py` の引数定義を詳解。Hydra との使い分けも説明 |
