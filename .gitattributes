@@ -1,0 +1,2 @@
+# ノートブックは実行結果の証跡のため、言語判定の対象から外す
+*.ipynb linguist-documentation
