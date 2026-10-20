@@ -59,3 +59,7 @@ scripts/*
 tests/*
 !tests/.gitkeep
 !tests/README.md
+
+# Claude Code（個人設定と train-loop の作業ファイルは共有しない）
+.claude/settings.local.json
+workspace/
